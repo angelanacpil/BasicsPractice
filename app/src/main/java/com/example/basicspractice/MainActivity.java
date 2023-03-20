@@ -18,17 +18,21 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Context
+    Context context;
+
     // Declare game grid and tiles
     private GridView gameBoardView;
+    GridAdapter gridAdapter;
     int tiles[] = {R.drawable.tile1, R.drawable.tile2, R.drawable.tile3, R.drawable.tile1, R.drawable.tile2, R.drawable.tile2, R.drawable.tile3, R.drawable.tile1, R.drawable.tile2, R.drawable.tile1};
 
+    // Initialize Inventory
     private RecyclerView inventoryRecyclerView;
     private ItemListAdapter itemListAdapter;
     private List<Integer> inventory = new ArrayList<>();
     LinearLayoutManager linearLayoutManager;
 
-    Context context;
-    GridAdapter gridAdapter;
+    // Toast message, debugging purposes
     CharSequence text = "";
     int duration = Toast.LENGTH_SHORT;
 
@@ -42,20 +46,17 @@ public class MainActivity extends AppCompatActivity {
         // Initialize gameBoardView
         gameBoardView = findViewById(R.id.GameBoard);
 
-        // Inventory
+        // GameBoard Adapter
+        gridAdapter = new GridAdapter(context, tiles);
+        gameBoardView.setAdapter(gridAdapter);
 
+        // Inventory
         inventoryRecyclerView = findViewById(R.id.inventoryView);
         itemListAdapter = new ItemListAdapter(inventory);
 
         linearLayoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
         inventoryRecyclerView.setLayoutManager(linearLayoutManager);
         inventoryRecyclerView.setAdapter(itemListAdapter);
-
-
-        // Adapter
-        gridAdapter = new GridAdapter(context, tiles);
-        gameBoardView.setAdapter(gridAdapter);
-
 
         // Event Handler
         gameBoardView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -69,10 +70,6 @@ public class MainActivity extends AppCompatActivity {
 
                 inventory.add(resourceId);
                 itemListAdapter.notifyDataSetChanged();
-                // set an Intent to Another Activity
-//                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-//                intent.putExtra("image", tiles[position]); // put image data in Intent
-//                startActivity(intent); // start Intent
             }
         });
     }
