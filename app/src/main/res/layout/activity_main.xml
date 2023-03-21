@@ -12,16 +12,17 @@
     <GridView
         android:id="@+id/GameBoard"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="510dp"
         android:numColumns="3"
         android:horizontalSpacing="10dp"
-        android:verticalSpacing="10dp" />
+        android:verticalSpacing="10dp"
+        android:scrollbars="none" />
 
     <!--  Inventory  -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/inventoryView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal" />
 
 </LinearLayout>

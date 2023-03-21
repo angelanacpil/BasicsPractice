@@ -7,13 +7,15 @@ import android.content.Context;
 import android.widget.ImageView;
 import android.view.LayoutInflater;
 
+import java.util.List;
+
 public class GridAdapter extends BaseAdapter {
     private Context context;
-    private int tiles[];
+    private List<Integer> tiles;
     private LayoutInflater inflater;
 
     // Constructor
-    public GridAdapter(Context applicationContext, int[] tiles) {
+    public GridAdapter(Context applicationContext, List<Integer> tiles) {
         this.context = applicationContext;
         this.tiles = tiles;
         inflater = (LayoutInflater.from(applicationContext));
@@ -22,7 +24,7 @@ public class GridAdapter extends BaseAdapter {
     // Adapter Methods
     @Override
     public int getCount() {
-        return tiles.length;
+        return tiles.size();
     }
 
     @Override
@@ -39,7 +41,7 @@ public class GridAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = inflater.inflate(R.layout.activity_boardtile, null); // inflate the layout
         ImageView icon = (ImageView) view.findViewById(R.id.icon); // get the reference of ImageView
-        icon.setImageResource(tiles[i]); // set tile images
+        icon.setImageResource(tiles.get(i)); // set tile images
         return view;
     }
 }
