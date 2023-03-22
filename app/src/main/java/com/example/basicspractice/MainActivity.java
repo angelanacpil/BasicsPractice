@@ -3,6 +3,7 @@ package com.example.basicspractice;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,17 +36,16 @@ public class MainActivity extends AppCompatActivity {
         EditText playerNameEditText = findViewById(R.id.playerNameEditText);
 
         // If player doesn't exist yet, show text input
-        if (dbHandler.getPlayer() == null) {
+        if (TextUtils.isEmpty(dbHandler.getPlayer().getPlayer_name())) {
             playerNameEditText.setVisibility(View.VISIBLE);
         } else {
             player_name = dbHandler.getPlayer().getPlayer_name();
+            Log.d("PLAYER NAME", player_name);
         }
 
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                dbHandler.clearDatabase();
 
                 moveToIntro();
 
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         // Player Name to DB
                         dbHandler.addNewPlayer(playerNameEditText.getText().toString(), 1, false, "0", "0", "0", "0");
+                        // dbHandler.clearTable()
 
                         String msg = dbHandler.getPlayer().getPlayer_name() + "";
 

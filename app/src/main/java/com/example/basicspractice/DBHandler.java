@@ -64,8 +64,44 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void clearDatabase() {
-        db.execSQL("DELETE FROM "+ TABLE_NAME);
+    public boolean deletePlayer(String playerName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Define the WHERE clause to specify the player to delete
+        String whereClause = NAME_COL + " = ?";
+        String[] whereArgs = new String[] { playerName };
+
+        // Call the delete() method to delete the player from the database
+        int rowsDeleted = db.delete(TABLE_NAME, whereClause, whereArgs);
+
+        // Close the database connection
+        db.close();
+
+        // Return true if the player was deleted successfully, false otherwise
+        return rowsDeleted > 0;
+    }
+
+    public void updatePlayer(String player_name, int current_stage, boolean is_game_complete, String stage1_rt, String stage1_best_rt, String stage2_rt, String stage2_best_rt) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Create a ContentValues object to hold the updated player data
+        ContentValues values = new ContentValues();
+        values.put(CURRENT_STAGE_COL, current_stage);
+        values.put(IS_GAME_COMPLETE_COL, is_game_complete);
+        values.put(STAGE1_RT_COL, stage1_rt);
+        values.put(STAGE1_BEST_RT_COL, stage1_best_rt);
+        values.put(STAGE2_RT_COL, stage2_rt);
+        values.put(STAGE2_BEST_RT_COL, stage2_best_rt);
+
+        // Define the WHERE clause to specify the player to update
+        String whereClause = NAME_COL + " = ?";
+        String[] whereArgs = new String[] { player_name };
+
+        // Call the update() method to update the player data in the database
+        db.update(TABLE_NAME, values, whereClause, whereArgs);
+
+        // Close the database connection
+        db.close();
     }
 
     public Player getPlayer() {
@@ -78,28 +114,32 @@ public class DBHandler extends SQLiteOpenHelper {
 
         // Moving our cursor to first position.
         if (cursorPlayer.moveToFirst()) {
-//            String name = cursor.getString(cursor.getColumnIndex("name"));
-//            int age = cursor.getInt(cursor.getColumnIndex("age"));
+            newPlayer = new Player(
+                    cursorPlayer.getString(1),
+                    cursorPlayer.getInt(2),
+                    cursorPlayer.getInt(3) == 1,
+                    cursorPlayer.getString(4),
+                    cursorPlayer.getString(5),
+                    cursorPlayer.getString(6),
+                    cursorPlayer.getString(7)
+            );
 
-            do {
-                // Using data from cursor to create a new player via its constructor.
-                newPlayer = new Player(
-                        cursorPlayer.getString(1),
-                        cursorPlayer.getInt(2),
-                        cursorPlayer.getInt(3) == 1,
-                        cursorPlayer.getString(4),
-                        cursorPlayer.getString(5),
-                        cursorPlayer.getString(6),
-                        cursorPlayer.getString(7)
-                );
-
-            } while (cursorPlayer.moveToNext());
         }
 
         // Close & Return
         cursorPlayer.close();
         db.close();
         return newPlayer;
+    }
+
+    public void clearTable() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Call the delete() method with no WHERE clause to delete all rows
+        db.delete(TABLE_NAME, null, null);
+
+        // Close the database connection
+        db.close();
     }
 
     @Override
