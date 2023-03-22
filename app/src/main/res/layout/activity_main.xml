@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="1dp"
     tools:context=".MainActivity">
 
     <!-- Game Board -->
@@ -23,13 +22,17 @@
         android:id="@+id/inventoryView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:layout_marginTop="12dp"
         android:orientation="horizontal" />
 
     <!-- Timer -->
     <TextView
         android:id="@+id/timerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="0" />
+        android:layout_height="50dp"
+        android:text="0"
+        android:paddingLeft="10dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="24sp" />
 
 </LinearLayout>

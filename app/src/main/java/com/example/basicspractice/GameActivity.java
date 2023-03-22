@@ -31,18 +31,16 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
-    // Context
+    // Context, DB, intent
     Context context;
-
-    // Database Test
-    String playerN = "UnknownPlayer";
+    private DBHandler dbHandler;
+    // Bundle extras = getIntent().getExtras(); Get data from intent
 
     // Declare game grid and tiles
     GridView gameBoardView;
     GridAdapter gridAdapter;
 
     int tilesImg[] = {R.drawable.tile1, R.drawable.tile2, R.drawable.tile3, R.drawable.tile4, R.drawable.tile5};
-
     List<Integer> initialTiles = new ArrayList<Integer>();
 
     // Initialize Inventory
@@ -54,7 +52,6 @@ public class GameActivity extends AppCompatActivity {
     // Score & Timer
     int score = 0;
     TextView timerText;
-
     private CountDownTimer countDownTimer;
 
     private void startTimer(long duration) {
@@ -74,7 +71,6 @@ public class GameActivity extends AppCompatActivity {
         };
         countDownTimer.start();
     }
-
 
     // Game Logic Conditional
     void checkInventory(List<Integer> stack) {
@@ -124,52 +120,21 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Context, DB, Intent
         context = getApplicationContext();
+        dbHandler = new DBHandler(GameActivity.this);
 
-        // Database Reference
-        GameDbHelper dbHelper = new GameDbHelper(context);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        if (extras != null) { // Get data from intent
+//            player_name = extras.getString("player_name");
+//        }
 
-        // Define a projection that specifies which columns to retrieve
-        String[] projection = {
-                GameContract.ScoreEntry._ID,
-                GameContract.ScoreEntry.COLUMN_NAME_PLAYER_NAME,
-                GameContract.ScoreEntry.COLUMN_NAME_SCORE
-        };
+        // Get Player Name
+        String player_name = dbHandler.getPlayer().getPlayer_name() + "";
 
-        // DB Content Values
-        ContentValues values = new ContentValues();
-        values.put(GameContract.ScoreEntry.COLUMN_NAME_PLAYER_NAME, "Juan");
-        values.put(GameContract.ScoreEntry.COLUMN_NAME_SCORE, 1);
+        // Timer & Player
+        Log.d("TEM", player_name);
 
-        // Define a selection criteria
-        String selection = GameContract.ScoreEntry.COLUMN_NAME_PLAYER_NAME + " = ?";
-        String[] selectionArgs = { "Juan" };
-
-        // Query the database
-        Cursor cursor = db.query(
-                GameContract.ScoreEntry.TABLE_NAME,   // The table to query
-                projection,                            // The columns to retrieve
-                selection,                             // The selection criteria
-                selectionArgs,                         // The selection criteria values
-                null,                                  // Group by
-                null,                                  // Filter by
-                null                                   // Sort order
-        );
-
-        // Loop through the cursor to retrieve the data
-        if (cursor.moveToFirst()) {
-            do {
-                int id = cursor.getInt(cursor.getColumnIndexOrThrow(GameContract.ScoreEntry._ID));
-                String playerName = cursor.getString(cursor.getColumnIndexOrThrow(GameContract.ScoreEntry.COLUMN_NAME_PLAYER_NAME));
-                int score = cursor.getInt(cursor.getColumnIndexOrThrow(GameContract.ScoreEntry.COLUMN_NAME_SCORE));
-            } while (cursor.moveToNext());
-        }
-
-        // Close the cursor
-        cursor.close();
-
-        // Timer
+        timerText = findViewById(R.id.timerView);
         startTimer(24000);
 
         // Initialize gameBoardView
@@ -194,10 +159,9 @@ public class GameActivity extends AppCompatActivity {
         inventoryRecyclerView.setLayoutManager(linearLayoutManager);
         inventoryRecyclerView.setAdapter(itemListAdapter);
 
-        // Timer
-        timerText = findViewById(R.id.timerView);
+        // EVENT HANDLERS
 
-        // Event Handlers
+        // Click Grid Item/Tile from Game Board
         gameBoardView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -212,19 +176,15 @@ public class GameActivity extends AppCompatActivity {
                 iterator.next();
                 iterator.remove();
                 gridAdapter.notifyDataSetChanged();
-
-                // Database Test
-                Log.d("Test", playerN + "");
             }
         });
 
-        // Disable scroll via detecting touch
+        // Disable scroll by detecting touch
         gameBoardView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return event.getAction() == MotionEvent.ACTION_MOVE;
             }
         });
-
     }
 }
